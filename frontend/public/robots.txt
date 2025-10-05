@@ -1,0 +1,6 @@
+# ClimoPilot - NASA Climate Data App
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://climopilot.earth/sitemap.xml

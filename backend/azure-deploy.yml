@@ -1,0 +1,32 @@
+# Azure App Service Deployment Configuration
+# This file helps configure the deployment for Azure App Service
+
+# Environment Variables for Production
+# Set these in Azure App Service Configuration:
+# - POWER_START=19810101
+# - POWER_END=20241231
+# - DEFAULT_WINDOW_DAYS=7
+# - WEBSITES_PORT=8000
+# - WEBSITES_ENABLE_APP_SERVICE_STORAGE=false
+
+# CORS Configuration
+# The backend is configured to allow all origins in production
+# For security, you can restrict this to your domain:
+# - ALLOWED_ORIGINS=https://climopilot.com,https://www.climopilot.com
+
+# Health Check
+# Azure will use the /health endpoint for health checks
+# Endpoint: GET /health
+# Expected response: {"status": "ok"}
+
+# Scaling Configuration
+# Recommended for Azure App Service:
+# - Minimum instances: 1
+# - Maximum instances: 10
+# - Scale based on: CPU percentage (70%)
+
+# Monitoring
+# Enable Application Insights for monitoring:
+# - Performance monitoring
+# - Error tracking
+# - Usage analytics

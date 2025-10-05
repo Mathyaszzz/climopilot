@@ -88,6 +88,28 @@ const ResultsPopup = ({ isOpen, onClose, data, location, date }) => {
 
   const jsonData = formatResultsForJSON();
 
+  // User-friendly weather condition labels
+  const weatherLabels = {
+    hot: 'Extreme Heat',
+    cold: 'Freezing Weather', 
+    wet: 'Heavy Rain',
+    wind: 'Strong Winds'
+  };
+
+  const weatherDescriptions = {
+    hot: 'Dangerously hot weather above 90°F (32°C)',
+    cold: 'Temperatures below freezing (32°F/0°C)',
+    wet: 'More than 0.4 inches of rain per day',
+    wind: 'Winds over 16 mph (25 km/h)'
+  };
+
+  const weatherAdvice = {
+    hot: 'Stay indoors, drink water, check on elderly',
+    cold: 'Dress warmly, protect pipes, watch for ice',
+    wet: 'Avoid driving, check for flooding',
+    wind: 'Secure outdoor items, avoid high areas'
+  };
+
   return (
     <div style={{
       position: 'fixed',
@@ -150,8 +172,50 @@ const ResultsPopup = ({ isOpen, onClose, data, location, date }) => {
           {/* Results Cards */}
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ marginBottom: '1rem', color: '#2d3748', fontSize: '1.125rem' }}>
-              Probability Analysis
+              Weather Risk Assessment
             </h3>
+            <div style={{ 
+              marginBottom: '1.5rem', 
+              padding: '1rem', 
+              background: '#f0f9ff', 
+              borderRadius: '8px',
+              border: '1px solid #0ea5e9',
+              fontSize: '0.9rem',
+              lineHeight: '1.4'
+            }}>
+              <strong>📈 What do these percentages mean?</strong><br/>
+              These show how often extreme weather has occurred on this date in the past. 
+              For example, "25%" means extreme weather happened about 1 in 4 years historically.
+            </div>
+            
+            {/* Low Risk Message */}
+            {(() => {
+              const results = data.results || data;
+              const allRisks = Object.values(results).map(value => {
+                const isApiFormat = typeof value === 'object' && value.prob !== undefined;
+                return isApiFormat ? value.prob * 100 : value;
+              });
+              const maxRisk = Math.max(...allRisks);
+              
+              if (maxRisk < 20) {
+                return (
+                  <div style={{ 
+                    marginBottom: '1.5rem', 
+                    padding: '1rem', 
+                    background: '#f0fdf4', 
+                    borderRadius: '8px',
+                    border: '1px solid #22c55e',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.4'
+                  }}>
+                    <strong>✅ Great Weather Expected!</strong><br/>
+                    All weather risks are low for this date and location. This means historically, 
+                    the weather has been mild and stable - perfect for outdoor activities!
+                  </div>
+                );
+              }
+              return null;
+            })()}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
               {Object.entries(data.results || data).map(([key, value]) => {
                 // Handle both API format and mock format
@@ -168,18 +232,26 @@ const ResultsPopup = ({ isOpen, onClose, data, location, date }) => {
                     borderRadius: '8px',
                     backgroundColor: '#f8fafc'
                   }}>
-                    <div style={{ fontWeight: '600', color: '#2d3748', marginBottom: '0.5rem', textTransform: 'capitalize' }}>
-                      {key}
+                    <div style={{ fontWeight: '600', color: '#2d3748', marginBottom: '0.5rem' }}>
+                      {weatherLabels[key] || key}
                     </div>
                     <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#3182ce', marginBottom: '0.25rem' }}>
                       {isApiFormat ? (probability * 100).toFixed(1) : probability.toFixed(1)}%
                     </div>
+                    <div style={{ fontSize: '0.875rem', color: '#4a5568', marginBottom: '0.5rem' }}>
+                      {weatherDescriptions[key]}
+                    </div>
                     {isApiFormat && ci[0] !== 0 && ci[1] !== 0 && (
-                      <div style={{ fontSize: '0.875rem', color: '#718096', marginBottom: '0.5rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#718096', marginBottom: '0.5rem' }}>
                         CI: {(ci[0] * 100).toFixed(1)}% - {(ci[1] * 100).toFixed(1)}%
                       </div>
                     )}
-                    <div style={{ fontSize: '0.75rem', color: '#a0aec0' }}>
+                    {isApiFormat && (probability * 100) >= 20 && (
+                      <div style={{ fontSize: '0.75rem', color: '#2d3748', fontWeight: '500', marginTop: '0.5rem', padding: '0.5rem', backgroundColor: '#f0f9ff', borderRadius: '4px', border: '1px solid #0ea5e9' }}>
+                        💡 <strong>Advice:</strong> {weatherAdvice[key]}
+                      </div>
+                    )}
+                    <div style={{ fontSize: '0.7rem', color: '#a0aec0', marginTop: '0.5rem' }}>
                       {threshold} • n={n}
                     </div>
                   </div>

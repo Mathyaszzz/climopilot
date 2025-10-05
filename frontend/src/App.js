@@ -3,7 +3,6 @@ import './App.css';
 import Header from './components/Header';
 import LocationSelector from './components/LocationSelector';
 import DateSelector from './components/DateSelector';
-import WeatherResults from './components/WeatherResults';
 import ResultsPopup from './components/ResultsPopup';
 import { fetchLikelihood } from './services/api';
 
@@ -84,13 +83,6 @@ function App() {
             </div>
           )}
 
-          {weatherData && (
-            <WeatherResults 
-              data={weatherData}
-              location={selectedLocation}
-              date={selectedDate}
-            />
-          )}
         </div>
       </main>
 
